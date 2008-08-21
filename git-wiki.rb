@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$: << File.expand_path(*Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a)
+$: << *Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a
 %w(sinatra
 rubygems
 git

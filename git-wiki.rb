@@ -2,6 +2,7 @@
 $:.unshift *Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a
 %w(sinatra
 rubygems
+fileutils
 git
 haml
 sass
@@ -69,12 +70,13 @@ end
 use_in_file_templates!
 
 configure do
-  GitRepository = File.dirname(__FILE__) + '/tmp/wiki'
+  GitRepository = File.expand_path(File.dirname(__FILE__) + '/tmp/wiki')
   PageExtension = '.markdown'
   Homepage = 'Home'
   set_option :haml, :format => :html4
 
   unless (Page.repo = Git.open(GitRepository) rescue false)
+    FileUtils.mkdir_p GitRepository unless File.directory?(GitRepository)
     Page.repo = Git.init(GitRepository)
   end
 end

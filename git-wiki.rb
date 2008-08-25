@@ -69,7 +69,7 @@ end
 use_in_file_templates!
 
 configure do
-  GitRepository = ENV['GIT_WIKI_REPO'] || File.join(ENV['HOME'], 'wiki')
+  GitRepository = File.dirname(__FILE__) + '/tmp/wiki'
   PageExtension = '.markdown'
   Homepage = 'Home'
   set_option :haml, :format => :html4

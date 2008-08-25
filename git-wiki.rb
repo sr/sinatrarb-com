@@ -75,7 +75,7 @@ configure do
   set_option :haml, :format => :html4
 
   unless (Page.repo = Git.open(GitRepository) rescue false)
-    abort "#{GitRepository}: Not a git repository. Install your wiki with `rake bootstrap`"
+    Page.repo = Git.init(GitRepository)
   end
 end
 

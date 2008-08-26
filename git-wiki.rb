@@ -97,14 +97,10 @@ configure do
   Homepage = 'Home'
   set_option :haml, :format => :html4
 
-<<<<<<< HEAD:git-wiki.rb
-  unless (Page.repo = Git.open(GitRepository) rescue false)
-    FileUtils.mkdir_p GitRepository unless File.directory?(GitRepository)
-    Page.repo = Git.init(GitRepository)
-=======
-  unless (Page.repo = Grit::Repo.new(GitRepository) rescue false)
+  begin
+    Page.repo = Grit::Repo.new(GitRepository)
+  rescue Grit::InvalidGitRepositoryError, Grit::NoSuchPathError
     abort "#{GitRepository}: Not a git repository. Install your wiki with `rake bootstrap`"
->>>>>>> 6aa8f93... make use of grit:git-wiki.rb
   end
 end
 

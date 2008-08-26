@@ -100,6 +100,10 @@ configure do
   begin
     Page.repo = Grit::Repo.new(GitRepository)
   rescue Grit::InvalidGitRepositoryError, Grit::NoSuchPathError
+    FileUtils.mkdir_p(GitRepository) unless File.directory?(GitRepository)
+    Dir.chdir(GitRepository) { `git init` }
+    Page.repo = Grit::Repo.new(GitRepository)
+  rescue
     abort "#{GitRepository}: Not a git repository. Install your wiki with `rake bootstrap`"
   end
 end

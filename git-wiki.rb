@@ -94,7 +94,8 @@ configure do
   GitRepository = File.expand_path(File.dirname(__FILE__) + '/tmp/wiki')
   PageExtension = '.markdown'
   Homepage = 'Home'
-  set_option :haml, :format => :html4
+  set_option :haml,  :format        => :html4,
+                     :attr_wrapper  => '"'
 
   begin
     Page.repo = Grit::Repo.new(GitRepository)
@@ -114,7 +115,7 @@ helpers do
   end
 
   def list_item(page)
-    "<a class='page_name' href='/#{page}'>#{page.name.titleize}</a>"
+    '<a class="page_name" href="/%s">%s</a>' % [page, page.name.titleize]
   end
 end
 

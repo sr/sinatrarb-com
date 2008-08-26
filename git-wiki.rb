@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 $:.unshift *Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a
 %w(sinatra
+grit
 rubygems
 fileutils
-git
 haml
 sass
 bluecloth).each { |dependency| require dependency }

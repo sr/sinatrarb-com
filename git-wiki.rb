@@ -123,11 +123,6 @@ before { content_type 'text/html', :charset => 'utf-8' }
 
 get('/') { redirect '/' + Homepage }
 
-get '/_stylesheet.css' do
-  content_type 'text/css', :charset => 'utf-8'
-  sass :stylesheet
-end
-
 get '/_list' do
   @pages = Page.find_all
   haml :list
@@ -165,6 +160,8 @@ __END__
     %link{:rel => 'stylesheet', :href => '/_stylesheet.css', :type => 'text/css'}
     - Dir[Sinatra.application.options.public + '/*.js'].reverse.each do |lib|
       %script{:src => "/#{File.basename(lib)}", :type => 'text/javascript'}
+    - Dir[Sinatra.application.options.public + '/*.css'].each do |css|
+      %link{:href => "/#{File.basename(css)}", :type => "text/css", :rel => "stylesheet"}
     :javascript
       $(document).ready(function() {
         $.hotkeys.add('Ctrl+h', function() { document.location = '/#{Homepage}' })
@@ -249,51 +246,3 @@ __END__
         %li.odd=  list_item(page)
       - else
         %li.even= list_item(page)
-
-@@ stylesheet
-body
-  :font
-    family: "Lucida Grande", Verdana, Arial, Bitstream Vera Sans, Helvetica, sans-serif
-    size: 14px
-    color: black
-  line-height: 160%
-  background-color: white
-  margin: 0
-  padding: 0
-#content
-  padding: 2em
-a
-  padding: 2px
-  color: blue
-  &.exists
-    &:hover
-      background-color: blue
-      text-decoration: none
-      color: white
-  &.unknown
-    color: gray
-    &:hover
-      background-color: gray
-      color: white
-      text-decoration: none
-  &.cancel
-    color: red
-    &:hover
-      text-decoration: none
-      background-color: red
-      color: white
-textarea
-  font-family: courrier
-  font-size: 14px
-  line-height: 18px
-  padding: 5px
-button.submit
-  font-weight: bold
-ul#pages_list
-  list-style-type: none
-  margin: 0
-  padding: 0
-  li
-    padding: 5px
-    &.odd
-      background-color: #D3D3D3

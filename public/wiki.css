@@ -1,0 +1,172 @@
+html {
+  background-color: #e0e0e0; }
+
+body {
+  font-size: 100%;
+  font-family: Helvetica, Arial, sans-serif; }
+
+a {
+	color: #17d;
+	text-decoration: none; }
+	a:hover {
+		color: #05a;
+		text-decoration: underline; }
+
+#header, #content, #footer {
+  width: 40em !important;
+  margin: 0 auto;
+  background: #f8f8f8;
+  padding: 0 2em;
+ 	z-index: 0;
+ 	position: relative; }
+
+#header {
+  padding-top: 1em;
+	padding-bottom: 2em;
+	min-height: 108px;
+ 	background: #fff; }
+  #header h1 {
+    font: bold 3em Georgia, "Times New Roman", serif;
+		width: 6em; }
+		#header h1 a {
+	    color: #333;
+			display: block;
+			line-height: 108px;
+			padding-left: 3.5em;
+			position: relative;
+			left: -1.25em;
+			z-index: 2;
+			background: url('/sinatra-logo.gif'); 
+			background-repeat: no-repeat;
+			background-position: left middle; }
+			#header h1 a:hover {
+				color: #4e4e4e; }
+	#navigation {
+		position: absolute; 
+		left: 23em;
+		top: 4.5em; }
+		#navigation li {
+			float: left;
+			margin-right: 1em; }
+
+#content {
+  padding-top: 1em;
+  padding-bottom: 2em; }
+
+	#content strong {
+		font-weight: bold; }
+	#content em {
+		font-style: italic;	}
+
+	/* titles */
+	#content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+	#content h1 {
+		position: absolute;
+		font-size: 2em;
+		font-weight: bold;
+		top: -1.5em;
+		right: 0;
+		margin-top: -5px;
+		padding: .2em .5em;
+		border-bottom: 1px solid #e0e0e0;
+		width: 40em;
+		text-align: right;
+		color: #333;
+		z-index: 0; }
+  #content h2 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: .75em;
+    padding: .25em 0;
+		line-height: 1.2;
+    background: #f8f8f8;
+    color: #333;
+    border-bottom: 1px solid #c0c0c0; }
+	#content h3 {
+		font-weight: bold;
+		font-size: 1.5em;
+		color: #4e4e4e;
+		margin: 1em 0 .2em; }
+	#content h4 {
+		font-weight: bold;
+		font-size: 1.25em;
+		color: #4e4e4e;
+		margin: .25em 0; }
+	#content h5, #content h6 {
+		font-weight: bold;
+		color: #4e4e4e;
+		margin-top: .5em; }
+
+	/* code */
+	#content code, #content pre, #content textarea {
+		font-family: "Deja Vu Sans Mono", "Bitstream Vera Sans Mono", "Inconsolata", "Consolas", monospace; }
+	#content pre {
+		margin: .5em 0;
+		padding: .5em; }
+
+	/* forms */
+	#content textarea {
+	  border: 1px solid #ccc;
+	  font-size: .9em;
+	  padding: .5em;
+	 	display: block; 
+		width: 43em !important; }
+	#content #edit_textarea {
+		height: 30em; }
+	#content label {
+		display: block;
+		margin-top: 1em; }
+	#content p.submit {
+		margin-top: .5em; }
+		#content p.submit button {
+			font-weight: bold; }
+	#content .edit textarea {
+		height: 30em;
+		display: block;
+		margin-bottom: 1em; }
+	#content .edit input[type=submit] {
+		font-weight: bold; }
+
+	/* lists */
+	#content ul, #content ol {
+		margin-left: 1em;
+		margin-bottom: 1em; }
+	#content ul li {
+		list-style-type: disc; }
+	#content ol li {
+		margin-left: 1em;
+		list-style-type: decimal; }
+	
+	/* quotes */
+	#content blockquote {
+		margin: .5em 0;
+		padding: .5em 0 0 2em;
+		font-size: 1.25em;
+		color: #333;
+		position: relative; 
+		background: url(/quotes.png) left top no-repeat; }
+		#content blockquote p {
+			margin: 0;
+			padding: 0;
+			position: relative;	}
+		#content blockquote address {
+			display: block;
+			text-align: right; 
+			margin-top: .5em; 
+			font-size: .85em; }
+
+#footer {
+  padding: 1.5em 2.5em;
+  border-top: 1px solid #ccc; 
+	font-size: .8em;
+	width: 50em !important;
+	color: #666;
+	text-align: center; }
+
+/* page specific */
+#Quotes ul { 
+	margin: 0; }
+	#Quotes ul li {
+		list-style-type: none;
+		margin: 0 0 1.5em; }

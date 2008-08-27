@@ -241,12 +241,13 @@ __END__
 - title "Editing #{@page.name.titleize}"
 %h1= title
 %form{:method => 'POST', :action => "/e/#{@page}"}
-  %p
-    %textarea{:name => 'body', :rows => 16, :cols => 60}= @page.raw_body
-  %p
-    %input.submit{:type => :submit, :value => 'Save as the newest version'}
+  %textarea#edit_textarea{:name => 'body'}= @page.raw_body
+  %label{:for => 'message_textarea'} Message:
+  %textarea#message_textarea{:name => 'message', :rows => 2, :cols => 40}
+  %p.submit
+    %button{:type => :submit} Save as the newest version
     or
-    %a.cancel{:href=>"/#{@page}"} cancel
+    %a.cancel{:href=>"/#{@page}"} go back
 
 @@ list
 - title "Listing pages"

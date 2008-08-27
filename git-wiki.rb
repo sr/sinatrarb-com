@@ -162,10 +162,10 @@ __END__
   %head
     %title= title
     %link{:rel => 'stylesheet', :href => '/_stylesheet.css', :type => 'text/css'}
-    - Dir[Sinatra.application.options.public + '/*.js'].reverse.each do |lib|
-      %script{:src => "/#{File.basename(lib)}", :type => 'text/javascript'}
     - Dir[Sinatra.application.options.public + '/*.css'].each do |css|
       %link{:href => "/#{File.basename(css)}", :type => "text/css", :rel => "stylesheet"}
+    - Dir[Sinatra.application.options.public + '/*.js'].reverse.each do |lib|
+      %script{:src => "/#{File.basename(lib)}", :type => 'text/javascript'}
     :javascript
       $(document).ready(function() {
         $.hotkeys.add('Ctrl+h', function() { document.location = '/#{Homepage}' })
@@ -173,8 +173,8 @@ __END__
 
         /* title-case-ification */
         document.title = document.title.toTitleCase();
-        $('h1:first').text($('h1:first').text().toTitleCase());
-        $('a').each(function(i) {
+        $('.page').text($('.page').text().toTitleCase());
+        $('#content a').each(function(i) {
           var e = $(this)
           e.text(e.text().toTitleCase());
         })
@@ -238,7 +238,7 @@ __END__
   ~"#{@page.body}"
 
 @@ edit
-- title "Editing #{@page.name.titleize}"
+- title %Q{Editing <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
 %h1= title
 %form{:method => 'POST', :action => "/e/#{@page}"}
   %textarea#edit_textarea{:name => 'body'}= @page.raw_body

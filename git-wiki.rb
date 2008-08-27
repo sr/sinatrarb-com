@@ -117,6 +117,10 @@ helpers do
   def list_item(page)
     '<a class="page_name" href="/%s">%s</a>' % [page, page.name.titleize]
   end
+
+  def link_to(url, text)
+    %Q(<a href="#{url}">#{text}</a>)
+  end
 end
 
 before { content_type 'text/html', :charset => 'utf-8' }
@@ -176,7 +180,20 @@ __END__
         })
       })
   %body
+    #header
+      %h1= link_to '/', 'Sinatra'
+      %ul#navigation
+        %li= link_to '/GetSinatra', 'Get Sinatra'
+        %li= link_to '/docs/sinatra/index.html', 'Documentation'
+        %li= link_to '/Contribute', 'Contribute'
     #content= yield
+    #footer
+      &copy; The Sinatra Communauty | powered by
+      %a{ :href => "http://github.com/sr/git-wiki" } git-wiki
+      which is powered by
+      %a{ :href => "http://github.com/bmizerany/sinatra" } Sinatra
+      and
+      %a{ :href => "http://git-scm.org" } git
 
 @@ show
 - title @page.name.titleize

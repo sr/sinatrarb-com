@@ -152,7 +152,7 @@ end
 post '/e/:page' do
   @page = Page.new(params[:page])
   @page.body = params[:body]
-  request.xhr? ? @page.body : redirect("/#{@page.name}")
+  redirect '/' + @page
 end
 
 __END__
@@ -197,49 +197,13 @@ __END__
 
 @@ show
 - title @page.name.titleize
-:javascript
-  $(document).ready(function() {
-    $.editable.addInputType('autogrow', {
-      element : function(settings, original) {
-        var textarea = $('<textarea>');
-        if (settings.rows) {
-          textarea.attr('rows', settings.rows);
-        } else {
-          textarea.height(settings.height);
-        }
-        if (settings.cols) {
-          textarea.attr('cols', settings.cols);
-        } else {
-          textarea.width(settings.width);
-        }
-        $(this).append(textarea);
-        return(textarea);
-      },
-      plugin : function(settings, original) {
-        $('textarea', this).autogrow(settings.autogrow);
-      }
-    });
-
-    $('.edit_area').editable('/e/#{@page}', {
-      indicator: "saving...",
-      tooltip: 'double-click to edit...',
-      cancel: 'cancel',
-      submit: 'save',
-      event: 'dblclick',
-      cssclass: 'edit',
-      height: '30em',
-      loadurl: '/#{@page}.txt',
-      type: 'textarea',
-      name: 'body'
-    })
-  })
-%h1.page= title
+%h1= %Q{<span class="page">#{title}</span> &mdash; <a href="/e/#{@page}">Edit</a>}
 .content.edit_area{:id => @page}
   ~"#{@page.body}"
 
 @@ edit
-- title %Q{Editing <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
-%h1= title
+- title "Editing #{@page}"
+%h1= %Q{Editing <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
 %form{:method => 'POST', :action => "/e/#{@page}"}
   %textarea#edit_textarea{:name => 'body'}= @page.raw_body
   %label{:for => 'message_textarea'} Message:

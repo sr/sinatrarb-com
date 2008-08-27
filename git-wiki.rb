@@ -220,24 +220,21 @@ __END__
       }
     });
 
-    $('#page_content').editable('/e/#{@page}', {
-      loadurl: '/#{@page}.txt',
-      submit: '<button class="submit" type="submit">Save as the newest version</button>',
-      cancel: '<a class="cancel" href="" style="margin-left: 5px;">cancel</a>',
+    $('.edit_area').editable('/e/#{@page}', {
+      indicator: "saving...",
+      tooltip: 'double-click to edit...',
+      cancel: 'cancel',
+      submit: 'save',
       event: 'dblclick',
-      type: 'autogrow',
-      cols: 84,
-      rows: 20,
-      name: 'body',
-      onblur: 'ignore',
-      tooltip: ' ',
-      indicator: 'Saving...',
-      loadtext: '',
-      cssclass: 'edit_form',
+      cssclass: 'edit',
+      height: '30em',
+      loadurl: '/#{@page}.txt',
+      type: 'textarea',
+      name: 'body'
     })
   })
-%h1= title
-#page_content
+%h1.page= title
+.content.edit_area{:id => @page}
   ~"#{@page.body}"
 
 @@ edit

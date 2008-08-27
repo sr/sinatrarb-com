@@ -2,7 +2,6 @@
 $:.unshift *Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a
 %w(sinatra
 grit
-rubygems
 fileutils
 haml
 sass

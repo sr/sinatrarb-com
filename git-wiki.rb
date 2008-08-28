@@ -14,7 +14,7 @@ class String
 
   def linkify
     self.gsub(/([A-Z][a-z]+[A-Z][A-Za-z0-9]+)/) do |page|
-      "<a class='#{Page.new(page).tracked? ? 'exists' : 'unknown'}' href='#{page}'>#{page.titleize}</a>"
+      %Q{<a class="#{Page.new(page).to_css_class}" href="/#{page}">#{page.titleize}</a>}
     end
   end
 
@@ -27,51 +27,78 @@ class String
   end
 end
 
-class Page
-  class << self
-    attr_accessor :repo
-
-    def find_all
-      return [] if Page.repo.tree.contents.empty?
-      Page.repo.tree.contents.collect { |blob| Page.new(blob.name.without_ext) }
-    end
-  end
-
+class PageNotFound < Sinatra::NotFound
   attr_reader :name
 
   def initialize(name)
     @name = name
   end
+end
 
-  def body
-    raw_body.to_html
+class Page
+  class << self
+    attr_accessor :repo
+
+    def find_all
+      return [] if repo.tree.contents.empty?
+      repo.tree.contents.collect { |b| new(blob) }
+    end
+
+    def find(name)
+      page_blob = repo.tree/(name + PageExtension)
+      raise PageNotFound.new(name) unless page_blob
+      new(page_blob)
+    end
+
+    def find_or_create(name)
+      find(name)
+    rescue PageNotFound
+      new(create_blob_for(name))
+    end
+
+    private
+      def create_blob_for(page_name)
+        Grit::Blob.create(repo, :name => page_name + PageExtension, :data => '')
+      end
   end
 
-  def raw_body
-    tracked? ? find_blob.data : ''
+  def initialize(blob)
+    @blob = blob
+  end
+
+  def new?
+    body.nil?
+  end
+
+  def name
+    @blob.name.without_ext
+  end
+
+  def body
+    @blob.data
   end
 
   def body=(content)
-    return if content == raw_body
+    return if content == body
     File.open(file_name, 'w') { |f| f << content }
     add_to_index_and_commit!
   end
 
-  def tracked?
-    !find_blob.nil?
+  def to_html
+    body.linkify.to_html
   end
 
   def to_s
     name
   end
 
-  private
-    def find_blob
-      Page.repo.tree.contents.detect { |b| b.name == name + PageExtension }
-    end
+  def to_css_class
+    new? ? 'unknown' : 'exists'
+  end
 
+  private
     def add_to_index_and_commit!
-      Dir.chdir(GitRepository) { Page.repo.add(base_name) }
+      Dir.chdir(GitRepository) { Page.repo.add(@blob.name) }
       Page.repo.commit_index(commit_message)
     end
 
@@ -79,12 +106,8 @@ class Page
       File.join(GitRepository, name + PageExtension)
     end
 
-    def base_name
-      File.basename(file_name)
-    end
-
     def commit_message
-      tracked? ? "Edited #{name}" : "Created #{name}"
+      new? ? "Edited #{name}" : "Created #{name}"
     end
 end
 
@@ -106,6 +129,11 @@ configure do
   rescue
     abort "#{GitRepository}: Not a git repository. Install your wiki with `rake bootstrap`"
   end
+end
+
+error PageNotFound do
+  page = request.env['sinatra.error'].name
+  redirect "/e/#{page}"
 end
 
 helpers do
@@ -133,19 +161,19 @@ get '/_list' do
 end
 
 get '/:page' do
-  @page = Page.new(params[:page])
-  @page.tracked? ? haml(:show) : redirect("/e/#{@page.name}")
+  @page = Page.find(params[:page])
+  haml :show
 end
 
 get '/e/:page' do
-  @page = Page.new(params[:page])
+  @page = Page.find_or_create(params[:page])
   haml :edit
 end
 
 post '/e/:page' do
-  @page = Page.new(params[:page])
+  @page = Page.find_or_create(params[:page])
   @page.body = params[:body]
-  redirect '/' + @page
+  redirect "/#{@page}"
 end
 
 __END__
@@ -189,13 +217,13 @@ __END__
 - title @page.name.titleize
 %h1= %Q{<span class="page">#{title}</span> &mdash; <a href="/e/#{@page}">Edit</a>}
 .content.edit_area{:id => @page}
-  ~"#{@page.body}"
+  ~"#{@page.to_html}"
 
 @@ edit
 - title "Editing #{@page}"
 %h1= %Q{Editing <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
 %form{:method => 'POST', :action => "/e/#{@page}"}
-  %textarea#edit_textarea{:name => 'body'}= @page.raw_body
+  %textarea#edit_textarea{:name => 'body'}= @page.body
   %label{:for => 'message_textarea'} Message:
   %textarea#message_textarea{:name => 'message', :rows => 2, :cols => 40}
   %p.submit

@@ -208,7 +208,7 @@ helpers do
   end
 
   def history_item(page, revision)
-    [%Q{<span class="updated_at">#{revision.date.distance_in_words_from_now}</span>},
+    [%Q{#{revision.date.distance_in_words_from_now} ago},
      link_to("/h/#{page}/#{revision.id}", revision.short_message)].join(' &mdash; ')
   end
 

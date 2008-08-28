@@ -332,7 +332,7 @@ __END__
   %p.submit
     %button{:type => :submit} Save as the newest version
     or
-    %a.cancel{:href=> link_to(@page)} go back
+    = link_to("/#{@page}", 'go back')
 
 @@ history
 - title "History of #{@page}"

@@ -122,7 +122,7 @@ end
 use_in_file_templates!
 
 configure do
-  GitRepository = File.expand_path(File.dirname(__FILE__) + '/tmp/wiki')
+  GitRepository = File.expand_path(ENV['GIT_WIKI_REPO'] || File.dirname(__FILE__) + '/tmp/wiki')
   PageExtension = '.markdown'
   Homepage = 'Home'
   set_option :haml,  :format        => :html4,

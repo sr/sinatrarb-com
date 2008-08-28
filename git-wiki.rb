@@ -84,6 +84,11 @@ class Page
     add_to_index_and_commit!
   end
 
+  def revisions
+    return [] if new?
+    Page.repo.log('master', @blob.name)
+  end
+
   def to_html
     body.linkify.to_html
   end
@@ -146,6 +151,10 @@ helpers do
     %Q{<a class="page_name" href="/#{page}">#{page.name.titleize}</a>}
   end
 
+  def history_item(page, revision)
+    %Q{<a href="/#{page}/#{revision.id_abbrev}">#{revision.id_abbrev}</a>}
+  end
+
   def link_to(url, text)
     %Q{<a href="#{url}">#{text}</a>}
   end
@@ -163,6 +172,11 @@ end
 get '/:page' do
   @page = Page.find(params[:page])
   haml :show
+end
+
+get '/h/:page' do
+  @page = Page.find(params[:page])
+  haml :history
 end
 
 get '/e/:page' do
@@ -230,6 +244,13 @@ __END__
     %button{:type => :submit} Save as the newest version
     or
     %a.cancel{:href=>"/#{@page}"} go back
+
+@@ history
+- title "History of #{@page}"
+%h1= %Q{History of <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
+%ul#revisions
+  - @page.revisions.each do |revision|
+    %li= history_item(@page, revision)
 
 @@ list
 - title "Listing pages"

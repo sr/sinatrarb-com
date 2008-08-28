@@ -41,7 +41,7 @@ class Page
 
     def find_all
       return [] if repo.tree.contents.empty?
-      repo.tree.contents.collect { |b| new(blob) }
+      repo.tree.contents.collect { |blob| new(blob) }
     end
 
     def find(name)

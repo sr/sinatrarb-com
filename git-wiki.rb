@@ -58,12 +58,6 @@ end
 
 class RevisionNotFound < PageNotFound; end
 
-Revision = Struct.new(:page, :rev, :short_rev, :patch) do
-  def to_s
-    rev
-  end
-end
-
 class Page
   class << self
     attr_accessor :repo
@@ -74,16 +68,15 @@ class Page
     end
 
     def find(name)
-      page_blob = repo.tree/(name + PageExtension)
-      raise PageNotFound.new(name) unless page_blob
-      new(page_blob)
+      blob = find_blob(name)
+      raise PageNotFound.new(name) unless blob
+      new(blob)
     end
 
     def find_revision(name, revision)
-      page = find(name)
-      revision = page.revisions.detect { |rev| rev.id == revision }
-      raise RevisionNotFound.new(name) unless revision
-      Revision.new(page, revision.id, revision.id_abbrev, revision.show.first.diff)
+      blob = find_blob(name, revision)
+      raise RevisionNotFound.new(name) unless blob
+      new(blob)
     end
 
     def find_or_create(name)
@@ -103,6 +96,10 @@ class Page
       def create_blob_for(page_name)
         Grit::Blob.create(repo, :name => page_name + PageExtension, :data => '')
       end
+
+      def find_blob(name, treeish='HEAD')
+        repo.tree(treeish)/(name + PageExtension)
+      end
   end
 
   def initialize(blob)
@@ -113,8 +110,25 @@ class Page
     body.nil?
   end
 
+  def lastest?
+    (revisions.first.tree/@blob.name).id == @blob.id
+  end
+
   def name
     @blob.name.without_ext
+  end
+
+  def revision
+    # TODO: WTF!!!??
+    revisions.select do |commit|
+      commit.tree(commit, @blob.name).contents.detect do |blob|
+        blob.id == @blob.id
+      end
+    end.last.id
+  end
+
+  def short_revision
+    revision.chomp[0,7]
   end
 
   def body
@@ -198,17 +212,17 @@ helpers do
      link_to("/h/#{page}/#{revision.id}", revision.short_message)].join(' &mdash; ')
   end
 
-  def link_to(url_or_page_or_revision, text=nil)
-    case url_or_page_or_revision
+  def link_to(url_or_page, text=nil)
+    case url_or_page
     when Page
-      %Q{<a class="page" href="/#{url_or_page_or_revision}">#{url_or_page_or_revision.name.titleize}</a>}
-    when Revision
-      page = url_or_page_or_revision.page
-      rev  = url_or_page_or_revision
-      %Q{<a href="/h/#{page}/#{rev}">#{rev.short_rev}</a>}
+      %Q{<a class="page" href="/#{url_or_page}">#{url_or_page.name.titleize}</a>}
     else
-      %Q{<a href="#{url_or_page_or_revision}">#{text}</a>}
+      %Q{<a href="#{url_or_page}">#{text}</a>}
     end
+  end
+
+  def link_to_revision_of(page)
+    %Q{<a class="revision" href="/h/#{page}/#{page.revision}">#{page.short_revision}</a>}
   end
 
   def links_to_actions_for(page)
@@ -245,9 +259,9 @@ get '/h/:page' do
   haml :history
 end
 
-get '/p/:page/:revision' do
-  @revision = Page.find_revision(params[:page], params[:revision])
-  haml :patch
+get '/h/:page/:revision' do
+  @page = Page.find_revision(params[:page], params[:revision])
+  haml :show
 end
 
 get '/e/:page' do
@@ -299,8 +313,12 @@ __END__
       %a{ :href => "http://git-scm.org" } git
 
 @@ show
-- title @page.name.titleize
-%h1= links_to_actions_for(@page)
+- if @page.lastest?
+  - title @page.name.titleize
+  %h1= links_to_actions_for(@page)
+- else
+  - title "Version #{@page.short_revision} of #{@page.name}"
+  %h1= "Version #{link_to_revision_of(@page)} of #{link_to(@page)}"
 .content.edit_area{:id => @page}
   ~"#{@page.to_html}"
 
@@ -322,13 +340,6 @@ __END__
 %ul#revisions
   - @page.revisions.each do |revision|
     %li= history_item(@page, revision)
-
-@@ patch
-- title "Version #{@revision.rev} of #{@revision.page.name}"
-%h1= "Version #{link_to(@revision)} of #{link_to(@revision.page)}"
-%pre.patch
-  :preserve
-    <code>#{@revision.patch}</code>
 
 @@ list
 - title "Listing pages"

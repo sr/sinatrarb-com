@@ -56,6 +56,14 @@ class PageNotFound < Sinatra::NotFound
   end
 end
 
+class RevisionNotFound < PageNotFound; end
+
+Revision = Struct.new(:page, :rev, :short_rev, :patch) do
+  def to_s
+    rev
+  end
+end
+
 class Page
   class << self
     attr_accessor :repo
@@ -69,6 +77,13 @@ class Page
       page_blob = repo.tree/(name + PageExtension)
       raise PageNotFound.new(name) unless page_blob
       new(page_blob)
+    end
+
+    def find_revision(name, revision)
+      page = find(name)
+      revision = page.revisions.detect { |rev| rev.id == revision }
+      raise RevisionNotFound.new(name) unless revision
+      Revision.new(page, revision.id, revision.id_abbrev, revision.show.first.diff)
     end
 
     def find_or_create(name)
@@ -161,8 +176,11 @@ configure do
 end
 
 error PageNotFound do
-  page = request.env['sinatra.error'].name
-  redirect "/e/#{page}"
+  redirect "/e/#{request.env['sinatra.error'].name}"
+end
+
+error RevisionNotFound do
+  redirect "/#{request.env['sinatra.error'].name}"
 end
 
 helpers do
@@ -180,11 +198,16 @@ helpers do
      link_to("/h/#{page}/#{revision.id}", revision.short_message)].join(' &mdash; ')
   end
 
-  def link_to(url_or_page, text=nil)
-    if url_or_page.is_a?(Page)
-      %Q{<a class="page" href="/#{url_or_page}">#{url_or_page.name.titleize}</a>}
+  def link_to(url_or_page_or_revision, text=nil)
+    case url_or_page_or_revision
+    when Page
+      %Q{<a class="page" href="/#{url_or_page_or_revision}">#{url_or_page_or_revision.name.titleize}</a>}
+    when Revision
+      page = url_or_page_or_revision.page
+      rev  = url_or_page_or_revision
+      %Q{<a href="/h/#{page}/#{rev}">#{rev.short_rev}</a>}
     else
-      %Q{<a href="#{url_or_page}">#{text}</a>}
+      %Q{<a href="#{url_or_page_or_revision}">#{text}</a>}
     end
   end
 
@@ -220,6 +243,11 @@ end
 get '/h/:page' do
   @page = Page.find(params[:page])
   haml :history
+end
+
+get '/p/:page/:revision' do
+  @revision = Page.find_revision(params[:page], params[:revision])
+  haml :patch
 end
 
 get '/e/:page' do
@@ -294,6 +322,13 @@ __END__
 %ul#revisions
   - @page.revisions.each do |revision|
     %li= history_item(@page, revision)
+
+@@ patch
+- title "Version #{@revision.rev} of #{@revision.page.name}"
+%h1= "Version #{link_to(@revision)} of #{link_to(@revision.page)}"
+%pre.patch
+  :preserve
+    <code>#{@revision.patch}</code>
 
 @@ list
 - title "Listing pages"

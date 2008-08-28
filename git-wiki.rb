@@ -115,11 +115,11 @@ helpers do
   end
 
   def list_item(page)
-    '<a class="page_name" href="/%s">%s</a>' % [page, page.name.titleize]
+    %Q{<a class="page_name" href="/#{page}">#{page.name.titleize}</a>}
   end
 
   def link_to(url, text)
-    %Q(<a href="#{url}">#{text}</a>)
+    %Q{<a href="#{url}">#{text}</a>}
   end
 end
 

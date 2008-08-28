@@ -137,13 +137,6 @@ get '/:page' do
   @page.tracked? ? haml(:show) : redirect("/e/#{@page.name}")
 end
 
-get '/:page.txt' do
-  @page = Page.new(params[:page])
-  throw :halt, [404, "Unknown page #{params[:page]}"] unless @page.tracked?
-  content_type 'text/plain', :charset => 'utf-8'
-  @page.raw_body
-end
-
 get '/e/:page' do
   @page = Page.new(params[:page])
   haml :edit

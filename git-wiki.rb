@@ -155,8 +155,26 @@ helpers do
     %Q{<a href="/#{page}/#{revision.id_abbrev}">#{revision.id_abbrev}</a>}
   end
 
-  def link_to(url, text)
-    %Q{<a href="#{url}">#{text}</a>}
+  def link_to(url_or_page, text=nil)
+    if url_or_page.is_a?(Page)
+      %Q{<a class="page" href="/#{url_or_page}">#{url_or_page.name.titleize}</a>}
+    else
+      %Q{<a href="#{url_or_page}">#{text}</a>}
+    end
+  end
+
+  def links_to_actions_for(page)
+    [link_to(page),
+     edit_link_for(page),
+     history_link_for(page)].join(' &mdash; ' )
+  end
+
+  def edit_link_for(page)
+    link_to("/e/#{page}", 'Edit')
+  end
+
+  def history_link_for(page)
+    link_to("/h/#{page}", 'History')
   end
 end
 
@@ -229,25 +247,25 @@ __END__
 
 @@ show
 - title @page.name.titleize
-%h1= %Q{<span class="page">#{title}</span> &mdash; <a href="/e/#{@page}">Edit</a>}
+%h1= links_to_actions_for(@page)
 .content.edit_area{:id => @page}
   ~"#{@page.to_html}"
 
 @@ edit
 - title "Editing #{@page}"
-%h1= %Q{Editing <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
-%form{:method => 'POST', :action => "/e/#{@page}"}
+%h1= "Editing #{link_to(@page)}"
+%form{:method => 'POST', :action => edit_link_for(@page)}
   %textarea#edit_textarea{:name => 'body'}= @page.body
   %label{:for => 'message_textarea'} Message:
   %textarea#message_textarea{:name => 'message', :rows => 2, :cols => 40}
   %p.submit
     %button{:type => :submit} Save as the newest version
     or
-    %a.cancel{:href=>"/#{@page}"} go back
+    %a.cancel{:href=> link_to(@page)} go back
 
 @@ history
 - title "History of #{@page}"
-%h1= %Q{History of <a class="page" href="/#{@page}">#{@page.name.titleize}</a>}
+%h1= "History #{link_to(@page)}"
 %ul#revisions
   - @page.revisions.each do |revision|
     %li= history_item(@page, revision)

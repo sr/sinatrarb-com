@@ -318,15 +318,17 @@ __END__
   %h1= links_to_actions_for(@page)
 - else
   - title "Version #{@page.short_revision} of #{@page.name}"
-  %h1= "Version #{link_to_revision_of(@page)} of #{link_to(@page)}"
+  %h1
+    = "Version #{link_to_revision_of(@page)} of #{link_to(@page)}"
+    = link_to("/e/#{@page}?body=#{URI.encode(@page.body)}", "Revert to this version")
 .content.edit_area{:id => @page}
   ~"#{@page.to_html}"
 
 @@ edit
 - title "Editing #{@page}"
 %h1= "Editing #{link_to(@page)}"
-%form{:method => 'POST', :action => edit_link_for(@page)}
-  %textarea#edit_textarea{:name => 'body'}= @page.body
+%form{:method => 'POST', :action => "/e/#{@page}"}
+  %textarea#edit_textarea{:name => 'body'}= params[:body] || @page.body
   %label{:for => 'message_textarea'} Message:
   %textarea#message_textarea{:name => 'message', :rows => 2, :cols => 40}
   %p.submit

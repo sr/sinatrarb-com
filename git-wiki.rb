@@ -14,7 +14,7 @@ class String
 
   def linkify
     self.gsub(/([A-Z][a-z]+[A-Z][A-Za-z0-9]+)/) do |page|
-      %Q{<a class="#{Page.new(page).to_css_class}" href="/#{page}">#{page.titleize}</a>}
+      %Q{<a class="" href="/#{Page.css_class_for(page)}">#{page.titleize}</a>}
     end
   end
 
@@ -56,6 +56,13 @@ class Page
       new(create_blob_for(name))
     end
 
+    def css_class_for(name)
+      find(name)
+      'exists'
+    rescue PageNotFound
+      'unknown'
+    end
+
     private
       def create_blob_for(page_name)
         Grit::Blob.create(repo, :name => page_name + PageExtension, :data => '')
@@ -95,10 +102,6 @@ class Page
 
   def to_s
     name
-  end
-
-  def to_css_class
-    new? ? 'unknown' : 'exists'
   end
 
   private

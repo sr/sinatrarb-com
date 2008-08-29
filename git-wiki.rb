@@ -276,13 +276,6 @@ post '/e/:page' do
 end
 
 __END__
-@@ history
-- title "History of #{@page}"
-%h1= "History #{link_to(@page)}"
-%ul#revisions
-  - @page.revisions.each do |revision|
-    %li= history_item(@page, revision)
-
 @@ list
 - title "Listing pages"
 %h1 All pages

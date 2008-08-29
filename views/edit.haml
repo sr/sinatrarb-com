@@ -1,5 +1,7 @@
 - title "Editing #{@page}"
-%h1= "Editing #{link_to(@page)}"
+%h1
+  = precede('Editing ') do
+    - link_to_page(@page)
 %form{:method => 'POST', :action => "/e/#{@page}"}
   %textarea#edit_textarea{:name => 'body'}= params[:body] || @page.body
   %label{:for => 'message_textarea'} Message:

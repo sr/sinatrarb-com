@@ -40,40 +40,47 @@ helpers do
     @title
   end
 
-  def list_item(page)
-    %Q{<a class="page_name" href="/#{page}">#{page.name.titleize}</a>}
-  end
-
   def history_item(page, revision)
-    [%Q{#{revision.short_date} ago},
-     link_to("/h/#{page}/#{revision.id}", revision.short_message)].join(' &mdash; ')
-  end
-
-  def link_to(url_or_page, text=nil)
-    case url_or_page
-    when Page
-      %Q{<a class="page" href="/#{url_or_page}">#{url_or_page.name.titleize}</a>}
-    else
-      %Q{<a href="#{url_or_page}">#{text}</a>}
+    precede(revision.short_date + ' ago &mdash; ') do
+      link_to_page(page, revision)
     end
   end
 
-  def link_to_revision_of(page)
-    %Q{<a class="revision" href="/h/#{page}/#{page.revision}">#{page.short_revision}</a>}
+  def link_to(url, text)
+    haml_tag(:a, :href => url) { puts text }
   end
 
-  def links_to_actions_for(page)
-    [link_to(page),
-     edit_link_for(page),
-     history_link_for(page)].join(' &mdash; ' )
+  def link_to_page(page, revision=nil)
+    if revision
+      attrs = {:class => 'page_revision', :href => "/h/#{page}/#{revision.id}"}
+      text = revision.id_abbrev
+    end
+
+    haml_tag(:a, attrs || { :href => "/#{page}", :class => 'page' }) do
+      puts text || page.name.titleize
+    end
   end
 
   def edit_link_for(page)
-    link_to("/e/#{page}", 'Edit')
+    link_to "/e/#{page}", 'Edit'
   end
 
   def history_link_for(page)
-    link_to("/h/#{page}", 'History')
+    link_to "/h/#{page}", 'History'
+  end
+
+  def revert_link_for(page)
+    link_to "/e/#{page}?body=#{URI.encode(page.body)}", "Revert"
+  end
+
+  def actions_for(page)
+    capture_haml(page) do |p|
+      link_to_page(p)
+      puts ' &mdash; '
+      edit_link_for(p)
+      puts '/'
+      history_link_for(p)
+    end
   end
 end
 

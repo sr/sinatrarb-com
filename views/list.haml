@@ -6,6 +6,8 @@
   %ul#pages_list
     - @pages.each_with_index do |page, index|
       - if (index % 2) == 0
-        %li.odd=  list_item(page)
+        %li.odd
+          - link_to_page(page)
       - else
-        %li.even= list_item(page)
+        %li.even
+          - link_to_page(page)

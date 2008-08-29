@@ -276,18 +276,6 @@ post '/e/:page' do
 end
 
 __END__
-@@ show
-- if @page.lastest?
-  - title @page.name.titleize
-  %h1= links_to_actions_for(@page)
-- else
-  - title "Version #{@page.short_revision} of #{@page.name}"
-  %h1
-    = "Version #{link_to_revision_of(@page)} of #{link_to(@page)}"
-    = link_to("/e/#{@page}?body=#{URI.encode(@page.body)}", "Revert to this version")
-.content.edit_area{:id => @page}
-  ~"#{@page.to_html}"
-
 @@ edit
 - title "Editing #{@page}"
 %h1= "Editing #{link_to(@page)}"

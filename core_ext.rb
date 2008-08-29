@@ -1,6 +1,6 @@
 class String
   def to_html
-    BlueCloth.new(self).to_html.linkify
+    BlueCloth.new(self).to_html
   end
 
   def linkify

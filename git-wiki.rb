@@ -43,6 +43,9 @@ helpers do
   def history_item(page, revision)
     precede(revision.short_date + ' ago &mdash; ') do
       link_to_page(page, revision)
+      haml_tag(:span, :class => 'commit_message') do
+        puts revision.short_message
+      end
     end
   end
 

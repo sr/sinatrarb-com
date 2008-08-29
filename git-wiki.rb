@@ -45,7 +45,7 @@ helpers do
   end
 
   def history_item(page, revision)
-    [%Q{#{revision.date.distance_in_words_from_now} ago},
+    [%Q{#{revision.short_date} ago},
      link_to("/h/#{page}/#{revision.id}", revision.short_message)].join(' &mdash; ')
   end
 

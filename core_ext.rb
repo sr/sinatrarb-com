@@ -20,7 +20,6 @@ end
 
 class Time
   def distance_in_words_from_now(from_time = 0)
-    from_time = from_time.to_time if from_time.respond_to?(:to_time)
     distance_in_minutes = (((self - Time.now).abs)/60).round
 
     case distance_in_minutes
@@ -35,6 +34,14 @@ class Time
       when 86400..525599   then "#{(distance_in_minutes / 43200).round} months"
       when 525600..1051199 then 'about 1 year'
       else                      "over #{(distance_in_minutes / 525600).round} years"
+    end
+  end
+end
+
+module Grit
+  class Commit
+    def short_date
+      date.distance_in_words_from_now
     end
   end
 end

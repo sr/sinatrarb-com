@@ -7,8 +7,6 @@ haml
 sass
 bluecloth).each { |dependency| require dependency }
 
-use_in_file_templates!
-
 configure do
   GitRepository = File.expand_path(ENV['GIT_WIKI_REPO'] || File.dirname(__FILE__) + '/tmp/wiki')
   PageExtension = '.markdown'

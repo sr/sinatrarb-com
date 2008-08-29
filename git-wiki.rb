@@ -274,17 +274,3 @@ post '/e/:page' do
   @page.body = params[:body]
   redirect "/#{@page}"
 end
-
-__END__
-@@ list
-- title "Listing pages"
-%h1 All pages
-- if @pages.empty?
-  %p No pages found.
-- else
-  %ul#pages_list
-    - @pages.each_with_index do |page, index|
-      - if (index % 2) == 0
-        %li.odd=  list_item(page)
-      - else
-        %li.even= list_item(page)

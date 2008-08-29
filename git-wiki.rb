@@ -276,18 +276,6 @@ post '/e/:page' do
 end
 
 __END__
-@@ edit
-- title "Editing #{@page}"
-%h1= "Editing #{link_to(@page)}"
-%form{:method => 'POST', :action => "/e/#{@page}"}
-  %textarea#edit_textarea{:name => 'body'}= params[:body] || @page.body
-  %label{:for => 'message_textarea'} Message:
-  %textarea#message_textarea{:name => 'message', :rows => 2, :cols => 40}
-  %p.submit
-    %button{:type => :submit} Save as the newest version
-    or
-    = link_to("/#{@page}", 'go back')
-
 @@ history
 - title "History of #{@page}"
 %h1= "History #{link_to(@page)}"

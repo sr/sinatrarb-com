@@ -11,7 +11,10 @@
       $(document).ready(function() {
         /* title-case-ification */
         document.title = document.title.toTitleCase();
-        $('.page').text($('.page').text().toTitleCase());
+        $('.page').each(function(i) {
+          var e = $(this)
+          e.text(e.text().toTitleCase());
+        }
         $('#content a').each(function(i) {
           var e = $(this)
           e.text(e.text().toTitleCase());

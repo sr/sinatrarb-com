@@ -2,7 +2,6 @@
 %html
   %head
     %title= title
-    %link{:rel => 'stylesheet', :href => '/_stylesheet.css', :type => 'text/css'}
     - Dir[Sinatra.application.options.public + '/*.css'].each do |css|
       %link{:href => "/#{File.basename(css)}", :type => "text/css", :rel => "stylesheet"}
     - Dir[Sinatra.application.options.public + '/*.js'].reverse.each do |lib|

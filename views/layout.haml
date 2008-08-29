@@ -1,0 +1,34 @@
+!!! strict
+%html
+  %head
+    %title= title
+    %link{:rel => 'stylesheet', :href => '/_stylesheet.css', :type => 'text/css'}
+    - Dir[Sinatra.application.options.public + '/*.css'].each do |css|
+      %link{:href => "/#{File.basename(css)}", :type => "text/css", :rel => "stylesheet"}
+    - Dir[Sinatra.application.options.public + '/*.js'].reverse.each do |lib|
+      %script{:src => "/#{File.basename(lib)}", :type => 'text/javascript'}
+    :javascript
+      $(document).ready(function() {
+        /* title-case-ification */
+        document.title = document.title.toTitleCase();
+        $('.page').text($('.page').text().toTitleCase());
+        $('#content a').each(function(i) {
+          var e = $(this)
+          e.text(e.text().toTitleCase());
+        })
+      })
+  %body
+    #header
+      %h1= link_to '/', 'Sinatra'
+      %ul#navigation
+        %li= link_to '/GetSinatra', 'Get Sinatra'
+        %li= link_to '/docs/sinatra/index.html', 'Documentation'
+        %li= link_to '/Contribute', 'Contribute'
+    #content= yield
+    #footer
+      &copy; The Sinatra Communauty | powered by
+      %a{ :href => "http://github.com/sr/git-wiki" } git-wiki
+      which is powered by
+      %a{ :href => "http://github.com/bmizerany/sinatra" } Sinatra
+      and
+      %a{ :href => "http://git-scm.org" } git

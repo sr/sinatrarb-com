@@ -5,7 +5,7 @@ class String
 
   def linkify
     self.gsub(/([A-Z][a-z]+[A-Z][A-Za-z0-9]+)/) do |page|
-      %Q{<a class="" href="/#{Page.css_class_for(page)}">#{page.titleize}</a>}
+      %Q{<a class="#{Page.css_class_for(page)}" href="/#{page}">#{page.titleize}</a>}
     end
   end
 

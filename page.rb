@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/core_ext'
+
 class PageNotFound < Sinatra::NotFound
   attr_reader :name
 

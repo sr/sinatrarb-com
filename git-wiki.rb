@@ -5,7 +5,8 @@ grit
 fileutils
 haml
 sass
-bluecloth).each { |dependency| require dependency }
+bluecloth
+page).each { |dependency| require dependency }
 
 configure do
   GitRepository = File.expand_path(ENV['GIT_WIKI_REPO'] || File.dirname(__FILE__) + '/tmp/wiki')

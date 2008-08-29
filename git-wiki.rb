@@ -70,7 +70,8 @@ helpers do
   end
 
   def revert_link_for(page)
-    link_to "/e/#{page}?body=#{URI.encode(page.body)}", "Revert"
+    message = URI.encode "Revert to #{page.revision}"
+    link_to "/e/#{page}?body=#{URI.encode(page.body)}&message=#{message}", "Revert"
   end
 
   def actions_for(page)

@@ -75,12 +75,6 @@ class Page
     @blob.data
   end
 
-  def body=(content)
-    return if content == body
-    File.open(file_name, 'w') { |f| f << content }
-    add_to_index_and_commit!
-  end
-
   def revisions
     @revisions ||= begin
       return [] if new?
@@ -99,17 +93,24 @@ class Page
     end
   end
 
+  def update!(content, message='')
+    return if content == body
+    File.open(file_name, 'w') { |f| f << content }
+    add_to_index_and_commit!(message)
+  end
+
   private
-    def add_to_index_and_commit!
+    def add_to_index_and_commit!(custom_commit_message='')
       Dir.chdir(GitRepository) { Page.repo.add(@blob.name) }
-      Page.repo.commit_index(commit_message)
+      Page.repo.commit_index(commit_message(custom_commit_message))
     end
 
     def file_name
       File.join(GitRepository, name + PageExtension)
     end
 
-    def commit_message
+    def commit_message(message='')
+      return message unless message.empty?
       new? ? "Edited #{name}" : "Created #{name}"
     end
 end

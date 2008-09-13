@@ -123,6 +123,6 @@ end
 
 post '/e/:page' do
   @page = Page.find_or_create(params[:page])
-  @page.body = params[:body]
+  @page.update!(params[:body], params[:message])
   redirect "/#{@page}"
 end

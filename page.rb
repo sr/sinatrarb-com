@@ -1,14 +1,13 @@
 require File.dirname(__FILE__) + '/core_ext'
 
 class PageNotFound < Sinatra::NotFound
-  attr_reader :name
+  attr_reader :name, :revision
 
-  def initialize(name)
+  def initialize(name, revision)
     @name = name
+    @revision = revision
   end
 end
-
-class RevisionNotFound < PageNotFound; end
 
 class Page
   class << self
@@ -19,15 +18,9 @@ class Page
       repo.tree.contents.collect { |blob| new(blob) }
     end
 
-    def find(name)
-      blob = find_blob(name)
-      raise PageNotFound.new(name) unless blob
-      new(blob)
-    end
-
-    def find_revision(name, revision)
+    def find(name, revision='HEAD')
       blob = find_blob(name, revision)
-      raise RevisionNotFound.new(name) unless blob
+      raise PageNotFound.new(name, revision) unless blob
       new(blob)
     end
 

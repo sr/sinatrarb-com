@@ -27,11 +27,8 @@ configure do
 end
 
 error PageNotFound do
-  redirect "/e/#{request.env['sinatra.error'].name}"
-end
-
-error RevisionNotFound do
-  redirect "/#{request.env['sinatra.error'].name}"
+  error = request.env['sinatra.error']
+  error.revision == 'HEAD' ? redirect("/e/#{error.name}") : redirect("/#{error.name}")
 end
 
 helpers do
@@ -108,7 +105,7 @@ get '/h/:page' do
 end
 
 get '/h/:page/:revision' do
-  @page = Page.find_revision(params[:page], params[:revision])
+  @page = Page.find(params[:page], params[:revision])
   haml :show
 end
 

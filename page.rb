@@ -76,11 +76,7 @@ class Page
       commit.tree(commit, @blob.name).contents.detect do |blob|
         blob.id == @blob.id
       end
-    end.last.id
-  end
-
-  def short_revision
-    revision.chomp[0,7]
+    end.last
   end
 
   def body

@@ -68,7 +68,7 @@ class Page
   end
 
   def name
-    @blob.name.without_ext
+    @name ||= @blob.name.without_ext
   end
 
   def body
@@ -82,17 +82,21 @@ class Page
   end
 
   def revisions
-    return [] if new?
-    Page.repo.log('master', @blob.name)
+    @revisions ||= begin
+      return [] if new?
+      Page.repo.log('master', @blob.name)
+    end
   end
 
   def revision
     # TODO: WTF!!!??
-    revisions.select do |commit|
-      commit.tree(commit, @blob.name).contents.detect do |blob|
-        blob.id == @blob.id
-      end
-    end.last
+    @revision ||= begin
+      revisions.select do |commit|
+        commit.tree(commit, @blob.name).contents.detect do |blob|
+          blob.id == @blob.id
+        end
+      end.last
+    end
   end
 
   private

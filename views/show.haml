@@ -6,7 +6,7 @@
   - title "Version #{@page.revision.id_abbrev} of #{@page.name}"
   %h1
     Version 
-    = link_to_page(@page, @page.revision)
+    = link_to_page_with_revision(@page)
     = surround ' of ', ' &mdash; ' do
       = link_to_page(@page)
     = revert_link_for(@page)

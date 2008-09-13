@@ -51,6 +51,14 @@ class Page
     @blob = blob
   end
 
+  def to_html
+    body.linkify.to_html
+  end
+
+  def to_s
+    name
+  end
+
   def new?
     body.nil?
   end
@@ -61,15 +69,6 @@ class Page
 
   def name
     @blob.name.without_ext
-  end
-
-  def revision
-    # TODO: WTF!!!??
-    revisions.select do |commit|
-      commit.tree(commit, @blob.name).contents.detect do |blob|
-        blob.id == @blob.id
-      end
-    end.last
   end
 
   def body
@@ -87,12 +86,13 @@ class Page
     Page.repo.log('master', @blob.name)
   end
 
-  def to_html
-    body.linkify.to_html
-  end
-
-  def to_s
-    name
+  def revision
+    # TODO: WTF!!!??
+    revisions.select do |commit|
+      commit.tree(commit, @blob.name).contents.detect do |blob|
+        blob.id == @blob.id
+      end
+    end.last
   end
 
   private

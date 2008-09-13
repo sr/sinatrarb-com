@@ -37,28 +37,8 @@ helpers do
     @title
   end
 
-  def history_item(page, revision)
-    precede(revision.short_date + ' ago &mdash; ') do
-      link_to_page(page, revision)
-      haml_tag(:span, :class => 'commit_message') do
-        puts revision.short_message
-      end
-    end
-  end
-
   def link_to(url, text)
     haml_tag(:a, :href => url) { puts text }
-  end
-
-  def link_to_page(page, revision=nil)
-    if revision
-      attrs = {:class => 'page_revision', :href => "/h/#{page}/#{revision.id}"}
-      text = revision.id_abbrev
-    end
-
-    haml_tag(:a, attrs || { :href => "/#{page}", :class => 'page' }) do
-      puts text || page.name.titleize
-    end
   end
 
   def edit_link_for(page)
@@ -72,6 +52,30 @@ helpers do
   def revert_link_for(page)
     message = URI.encode "Revert to #{page.revision}"
     link_to "/e/#{page}?body=#{URI.encode(page.body)}&message=#{message}", "Revert"
+  end
+
+  def link_to_page(page, with_revision=false)
+    if with_revision
+      attrs = {:class => 'page_revision', :href => "/h/#{page}/#{page.revision.id}"}
+      text = page.revision.id_abbrev
+    end
+
+    haml_tag(:a, attrs || { :href => "/#{page}", :class => 'page' }) do
+      puts text || page.name.titleize
+    end
+  end
+
+  def link_to_page_with_revision(page)
+    link_to_page(page, true)
+  end
+
+  def history_item(page)
+    precede(page.revision.short_date + ' ago &mdash; ') do
+      link_to_page_with_revision(page)
+      haml_tag(:span, :class => 'commit_message') do
+        puts page.revision.short_message
+      end
+    end
   end
 
   def actions_for(page)
@@ -101,6 +105,9 @@ end
 
 get '/h/:page' do
   @page = Page.find(params[:page])
+  @revisions = @page.revisions.map do |revision|
+    Page.find(params[:page], revision.id)
+  end
   haml :history
 end
 

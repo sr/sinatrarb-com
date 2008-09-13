@@ -60,7 +60,7 @@ class Page
   end
 
   def new?
-    body.nil?
+    @blob.id.nil?
   end
 
   def lastest?
@@ -111,6 +111,6 @@ class Page
 
     def commit_message(message='')
       return message unless message.empty?
-      new? ? "Edited #{name}" : "Created #{name}"
+      new? ? "Created #{name}" : "Edited #{name}"
     end
 end

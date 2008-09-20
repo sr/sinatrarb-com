@@ -5,8 +5,8 @@ helpers do
   end
 
   def captcha_passed?
-    return true if params[:bacon].nil? # form not yet submited
-    @captcha ||= request.cookies[:passed] ||= check_captcha(params[:chunky], params[:bacon])
+    return true if params[:sinatra].nil? # form not yet submited
+    @captcha ||= request.cookies[:passed] ||= check_captcha(params[:nancy], params[:sinatra])
   end
 
   def check_captcha(session, answer)
@@ -19,8 +19,8 @@ helpers do
     return if request.cookies[:passed]
     session_id = rand(10_000)
     haml_tag(:img, :src => "http://captchator.com/captcha/image/#{session_id}")
-    haml_tag(:input, :type => 'hidden', :name => 'chunky', :value => session_id)
-    haml_tag(:input, :type => 'text', :name => 'bacon', :size => 10)
+    haml_tag(:input, :type => 'hidden', :name => 'nancy', :value => session_id)
+    haml_tag(:input, :type => 'text', :name => 'sinatra', :size => 10)
   end
 
   def link_to(url, text)

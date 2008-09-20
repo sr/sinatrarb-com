@@ -2,10 +2,13 @@
 %h1
   = precede('Editing ') do
     - link_to_page(@page)
+- unless captcha_passed?
+  %p Please prove you are human by solving the captcha
 %form{:method => 'POST', :action => "/e/#{@page}"}
   %textarea#edit_textarea{:name => 'body'}= params[:body] || @page.body
   %label{:for => 'message_textarea'} Message:
   %textarea#message_textarea{:name => 'message', :rows => 2, :cols => 40}= params[:message] || ''
+  = captcha_form_fields
   %p.submit
     %button{:type => :submit} Save as the newest version
     or

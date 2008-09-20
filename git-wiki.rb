@@ -3,6 +3,7 @@ $:.unshift *Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a
 %w(sinatra
 grit
 fileutils
+open-uri
 haml
 sass
 bluecloth
@@ -35,6 +36,24 @@ helpers do
   def title(title=nil)
     @title = title.to_s unless title.nil?
     @title
+  end
+
+  def captcha_passed?
+    request.cookies[:passed] ||= check_captcha(params[:chunky], params[:bacon])
+  end
+
+  def check_captcha(session, answer)
+    session = session.to_i
+    answer  = answer.gsub(/\W/, '')
+    open("http://captchator.com/captcha/check_answer/#{session}/#{answer}").read.to_i.nonzero? rescue false
+  end
+
+  def captcha_form_fields
+    return if request.cookies[:passed]
+    session_id = rand(10_000)
+    haml_tag(:img, :src => "http://captchator.com/captcha/image/#{session_id}")
+    haml_tag(:input, :type => 'hidden', :name => 'chunky', :value => session_id)
+    haml_tag(:input, :type => 'text', :name => 'bacon', :size => 10)
   end
 
   def link_to(url, text)
@@ -99,6 +118,7 @@ get '/_list' do
 end
 
 get '/:page' do
+  puts request.cookies[:passed].inspect
   @page = Page.find(params[:page])
   haml :show
 end
@@ -123,6 +143,10 @@ end
 
 post '/e/:page' do
   @page = Page.find_or_create(params[:page])
-  @page.update!(params[:body], params[:message])
-  redirect "/#{@page}"
+  unless captcha_passed?
+    haml :edit
+  else
+    @page.update!(params[:body], params[:message])
+    redirect "/#{@page}"
+  end
 end

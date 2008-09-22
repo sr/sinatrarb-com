@@ -2,10 +2,10 @@
 %html
   %head
     %title= title
-    - Dir[Sinatra.application.options.public + '/*.css'].each do |css|
-      %link{:href => "/#{File.basename(css)}", :type => "text/css", :rel => "stylesheet"}
-    - Dir[Sinatra.application.options.public + '/*.js'].reverse.each do |lib|
-      %script{:src => "/#{File.basename(lib)}", :type => 'text/javascript'}
+    %link{ :media => "screen", :type => "text/css", :href => "/reset.css", :rel => "stylesheet" }
+    %link{ :media => "screen", :type => "text/css", :href => "/wiki.css", :rel => "stylesheet" }
+    %script{ :src => "/jquery.min.js", :type => "text/javascript" }
+    %script{ :src => "/to-title-case.js", :type => "text/javascript" }
     :javascript
       $(document).ready(function() {
         /* title-case-ification */

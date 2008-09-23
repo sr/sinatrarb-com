@@ -43,7 +43,6 @@ get '/_list' do
 end
 
 get '/:page' do
-  puts request.cookies[:passed].inspect
   @page = Page.find(params[:page])
   haml :show
 end

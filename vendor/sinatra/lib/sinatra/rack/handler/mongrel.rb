@@ -1,6 +1,7 @@
 require 'mongrel'
 require 'stringio'
 
+
 module Rack
   module Handler
     class Mongrel < ::Mongrel::HttpHandler
@@ -65,9 +66,15 @@ module Rack
               response.header[k] = v
             }
           }
-          body.each { |part|
-            response.body << part
-          }
+          # taken from Merb until we have a better solution that conforms
+          # to the Rack::Standard
+          if Proc === body
+            body.call(response)
+          else
+            body.each { |part|
+              response.body << part
+            }
+          end
           response.finished
         ensure
           body.close  if body.respond_to? :close

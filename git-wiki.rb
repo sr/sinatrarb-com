@@ -3,10 +3,8 @@ $:.unshift *Dir[File.dirname(__FILE__) + '/vendor/**/lib'].to_a
 %w(sinatra
 grit
 fileutils
-open-uri
 haml
 sass
-bluecloth
 page
 helpers).each { |dependency| require dependency }
 

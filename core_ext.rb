@@ -1,3 +1,5 @@
+require 'bluecloth'
+
 class String
   def to_html
     BlueCloth.new(self).to_html

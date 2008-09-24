@@ -1,3 +1,5 @@
+require 'open-uri'
+
 helpers do
   def title(title=nil)
     @title = title.to_s unless title.nil?

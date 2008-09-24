@@ -1,8 +1,8 @@
-require 'bluecloth'
+require 'redcloth'
 
 class String
   def to_html
-    BlueCloth.new(self).to_html
+    RedCloth.new(self).to_html
   end
 
   def linkify

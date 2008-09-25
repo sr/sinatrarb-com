@@ -52,7 +52,12 @@ a {
 #content {
   padding-top: 1em;
   padding-bottom: 2em; }
-
+    #content .content h1 {
+      position: static;
+      width: auto;
+      text-align: left;
+      padding-left: 0;
+    }
 	#content strong {
 		font-weight: bold; }
 	#content em {
